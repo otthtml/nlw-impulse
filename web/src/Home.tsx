@@ -1,6 +1,7 @@
-import { ArrowLeft, BugBeetle, ChatTeardropDots, Lamp, Question, X } from 'phosphor-react'
+import { ArrowLeft, BugBeetle, Camera, ChatTeardropDots, CircleNotch, Lamp, Question, Trash, X } from 'phosphor-react'
 import { Popover } from '@headlessui/react'
 import { useState } from 'react'
+import html2canvas from 'html2canvas'
 
 export function CloseButton() {
     return (
@@ -66,12 +67,65 @@ export function FeedbackTypeStep(props: FeedbackTypeStepProps) {
     )
 }
 
+export function Loading() {
+    return (
+        <div className='w-6 h-6 flex items-center justify-center overflow-hidden'>
+            <CircleNotch className='bold w-6 h-4 animate-spin'/>
+        </div>
+    )
+}
+
+interface ScreenshotButtonProps {
+    screenshot: string | null;
+    setScreenshot: (screenshot: string | null) => void;
+}
+
+export function ScreenshotButton({screenshot, setScreenshot}: ScreenshotButtonProps) {
+    const [isTakingScreenshot, setIsTakingScreenshot] = useState(false);
+
+    async function takeScreenshot() {
+        setIsTakingScreenshot(true);
+        const canvas = await html2canvas(document.querySelector('html')!);
+        const base64img = canvas.toDataURL('image/png');
+        setScreenshot(base64img);
+        setIsTakingScreenshot(false);
+    }
+
+    if (screenshot) {
+        return (
+            <button
+                type='button'
+                className='p-1 w-10 h-10 rounded-md border-transparent flex justify-end items-end text-zinc-400 hover:text-zinc-100 transition-colors'
+                onClick={() => setScreenshot(null)}
+                style={{
+                    backgroundImage: `url(${screenshot})`,
+                    backgroundPosition: 'right bottom',
+                    backgroundSize: 180,
+                }}
+            >
+                <Trash weight='fill' />
+            </button>
+        )
+    }
+
+    return (
+        <button
+        type='button'
+        className='p-2 bg-zing-800 rounded-md border-transparent hover:bg-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-violet-500'
+        onClick={takeScreenshot}
+        >
+            { isTakingScreenshot ? <Loading/> : <Camera className='w-6 h-6 text-zinc-100'/> }
+        </button>
+    )
+}
+
 interface FeedbackContentStepProps {
     feedbackType: FeedbackType;
     returnToFeedbackType: () => void;
 }
 
 export function FeedbackContentStep({ feedbackType, returnToFeedbackType }: FeedbackContentStepProps) {
+    const [screenshot, setScreenshot] = useState<string | null>(null);
     const feedbackInfo = feedbackTypes[feedbackType];
 
     return(
@@ -91,8 +145,24 @@ export function FeedbackContentStep({ feedbackType, returnToFeedbackType }: Feed
                 </span>
                 <CloseButton/>
             </header>
-            <div className='flex py-8 gap-2 w-full'>
-            </div>
+            <form className='my-4 w-full'>
+                <textarea 
+                    className='min-w-[304px] w-full min-h-[112px] text-sm placeholder-zinc-400 text-zinc-100 border-zinc-600 bg-transparent rounded-md focus:border-violet-500 focus:ring-violet-500 focus:ring-1 resize-none focus:outline-none scrollbar scrollbar-thumb-zinc-700 scrollbar-track-transparent scrollbar-thin'
+                    placeholder='Conte o que está acontecendo...'
+                />
+                <footer className='flex gap-2 mt-2'>
+                    <ScreenshotButton
+                        screenshot={screenshot}
+                        setScreenshot={setScreenshot}
+                    />
+                    <button
+                        type='submit'
+                        className='p-2 bg-violet-500 rounded-[4px] border-transparent flex-1 flex justify-center items-center text-sm hover:bg-violet-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-violet-500 transition-colors'
+                    >
+                        Enviar
+                    </button>
+                </footer>
+            </form>
         </>
     )   
 }
