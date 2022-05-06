@@ -8,3 +8,11 @@ services:
       - type: bind
         source: ./web
         target: /web
+  server:
+    build: server
+    ports:
+      - "3333:3333"
+    volumes:
+      - type: bind
+        source: ./server
+        target: /server
