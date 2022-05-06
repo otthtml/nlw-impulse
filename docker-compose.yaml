@@ -1,6 +1,7 @@
 version: '3.9'
 services:
   web:
+    container_name: web
     build: web
     ports:
       - "3000:3000"
@@ -9,6 +10,7 @@ services:
         source: ./web
         target: /web
   server:
+    container_name: server
     build: server
     ports:
       - "3333:3333"
