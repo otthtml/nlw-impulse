@@ -19,3 +19,13 @@ services:
       - type: bind
         source: ./server
         target: /server
+  mobile:
+    container_name: mobile
+    build: mobile
+    ports:
+      - "3333:3333"
+      - "5555:5555"
+    volumes:
+      - type: bind
+        source: ./mobile
+        target: /mobile
