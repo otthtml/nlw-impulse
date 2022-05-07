@@ -4,4 +4,4 @@ FROM node:16
 WORKDIR /mobile
 
 # run the app
-CMD npm install && npm run start
+CMD npm install && npm run web
