@@ -2,6 +2,7 @@ import { ArrowLeft, BugBeetle, Camera, ChatTeardropDots, Check, CircleNotch, Lam
 import { Popover } from '@headlessui/react'
 import { useState } from 'react'
 import html2canvas from 'html2canvas'
+import { api } from './lib/api'
 
 export function CloseButton() {
     return (
@@ -132,11 +133,19 @@ export function FeedbackContentStep({
 }: FeedbackContentStepProps) {
     const [comment, setComment] = useState('');
     const [screenshot, setScreenshot] = useState<string | null>(null);
+    const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+
     const feedbackInfo = feedbackTypes[feedbackType];
 
-    function submitFeedback(event: React.FormEvent) {
+    async function submitFeedback(event: React.FormEvent) {
         event.preventDefault();
-        console.log(comment, screenshot);
+        setIsSendingFeedback(true);
+        await api.post('/feedback', {
+            type: feedbackType,
+            comment,
+            screenshot
+        });
+        setIsSendingFeedback(false);
         onFeedbackSent();
     }
 
@@ -170,11 +179,11 @@ export function FeedbackContentStep({
                         setScreenshot={setScreenshot}
                     />
                     <button
-                        disabled={comment.length === 0}
+                        disabled={comment.length === 0 || isSendingFeedback}
                         type='submit'
                         className='p-2 bg-violet-500 rounded-[4px] border-transparent flex-1 flex justify-center items-center text-sm hover:bg-violet-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-violet-500 transition-colors disabled:opacity-50 disabled:hover:bg-violet-500'
                     >
-                        Enviar
+                        {isSendingFeedback ? <Loading/> : 'Enviar feedback'}
                     </button>
                 </footer>
             </form>
