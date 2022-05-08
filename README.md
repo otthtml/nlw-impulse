@@ -18,6 +18,10 @@ docker-compose up web
 docker-compose up server
 ```
 
+If this is your first time, or if you've made DB changes, run the migrations with:
+```
+npx prisma migrate
+```
 You can also initiate prisma studio by sshing into the server container and running 
 ```
 npx prisma studio
@@ -25,9 +29,7 @@ npx prisma studio
 
 ## How to deploy
 
-web is automatically deployed whenever the 'i-hate-solid' branch receives a commit.
-
-server must be built using 'npx tsc'.
+Both web and server are automatically deployed whenever the 'i-hate-solid' branch receives a commit.
 
 ## Important notes about solid
 1. SubmitFeedbackUseCase uses a generic FeedbackRepository in order to create the feedbacks. 
