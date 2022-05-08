@@ -23,6 +23,12 @@ You can also initiate prisma studio by sshing into the server container and runn
 npx prisma studio
 ```
 
+## How to deploy
+
+web is automatically deployed whenever the 'i-hate-solid' branch receives a commit.
+
+server must be built using 'npx tsc'.
+
 ## Important notes about solid
 1. SubmitFeedbackUseCase uses a generic FeedbackRepository in order to create the feedbacks. 
 2. The generic repository has an interface for creation, which is implemented by the PrismaFeedbackRepository.
